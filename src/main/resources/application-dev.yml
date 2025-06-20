@@ -2,6 +2,8 @@ server:
   port: 8081
 
 spring:
+  application:
+    name: auth-service
   datasource:
     url: jdbc:mysql://s4.java21.net:13306/project_be10_team1_dev
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,6 +15,11 @@ spring:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 
 jwt:
   secret: Yq1mzeCkLBIh5vdxYmGKW62MyRbsvfNGnZyEPGPVWnARJIFUay0VVnqTMRT91Zp2y4njvK4TyScIU5hy5sQ  # 256bit 이상 추천
