@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.auth.entity;
+package com.nhnacademy.illuwa.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
