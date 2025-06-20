@@ -1,10 +1,10 @@
-package com.nhnacademy.illuwa.domain.auth.service.impl;
+package com.nhnacademy.illuwa.domain.user.service.impl;
 
 import com.nhnacademy.illuwa.common.exception.AlreadyExistsEmailException;
-import com.nhnacademy.illuwa.domain.auth.dto.SignupRequest;
-import com.nhnacademy.illuwa.domain.auth.entity.User;
-import com.nhnacademy.illuwa.domain.auth.repository.UserRepository;
-import com.nhnacademy.illuwa.domain.auth.service.SignupService;
+import com.nhnacademy.illuwa.domain.user.dto.SignupRequest;
+import com.nhnacademy.illuwa.domain.user.entity.User;
+import com.nhnacademy.illuwa.domain.user.repository.UserRepository;
+import com.nhnacademy.illuwa.domain.user.service.SignupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

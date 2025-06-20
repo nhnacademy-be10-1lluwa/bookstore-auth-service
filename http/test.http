@@ -1,0 +1,17 @@
+### 회원가입 테스트
+POST http://localhost:8081/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test12312312@google.com",
+  "password": "test1234123123213"
+}
+
+### 로그인 요청
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@google.com",
+  "password": "test1234"
+}
