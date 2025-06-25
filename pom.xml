@@ -98,7 +98,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Config Server -->
+        <!-- Config Client -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -124,6 +124,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>1lluwa-auth-service</finalName>
     </build>
 
 </project>
