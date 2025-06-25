@@ -39,7 +39,7 @@
 # .idea/modules.xml
 # .idea/*.iml
 # .idea/modules
-# *.iml
+ *.iml
 # *.ipr
 
 # CMake
@@ -150,3 +150,9 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,gradle,java
+
+/target/
+
+.DS_Store
+
+.env
