@@ -3,4 +3,4 @@ spring:
     name: auth-service
 
   config:
-    import: optional:configserver:http://localhost:10319
+    import: optional:configserver:http://localhost:10319/
