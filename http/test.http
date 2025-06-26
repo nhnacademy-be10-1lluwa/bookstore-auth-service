@@ -1,10 +1,10 @@
 ### 회원가입 테스트
-POST http://localhost:8081/auth/signup
+POST https://book1lluwa.store/auth/signup
 Content-Type: application/json
 
 {
-  "email": "test12312312@google.com",
-  "password": "test1234123123213"
+  "email": "abc123@google.com",
+  "password": "12345"
 }
 
 ### 로그인 요청
