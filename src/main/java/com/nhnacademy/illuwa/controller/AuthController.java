@@ -1,6 +1,5 @@
 package com.nhnacademy.illuwa.controller;
 
-import com.nhnacademy.illuwa.common.exception.DuplicateMemberException;
 import com.nhnacademy.illuwa.dto.SignupRequest;
 import com.nhnacademy.illuwa.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +15,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute SignupRequest signupRequest,
-                         RedirectAttributes redirectAttributes) {
-        try {
-            authService.signup(signupRequest);
-            return "redirect:/";
-        } catch (DuplicateMemberException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/signup";
-        }
+    public String signup(@ModelAttribute SignupRequest signupRequest) {
+        authService.signup(signupRequest);
+        return "redirect:/";
     }
 
 //    @PostMapping
