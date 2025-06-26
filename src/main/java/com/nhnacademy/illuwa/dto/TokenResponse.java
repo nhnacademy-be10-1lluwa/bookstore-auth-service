@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.domain.auth.dto;
+package com.nhnacademy.illuwa.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
