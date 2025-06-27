@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserClient userClient;
-    private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
     @Override
@@ -23,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
                 .name(signupRequest.getName())
                 .birth(signupRequest.getBirth())
                 .email(signupRequest.getEmail())
-                .password(passwordEncoder.encode(signupRequest.getPassword()))
+                .password(signupRequest.getPassword())
                 .contact(signupRequest.getContact())
                 .build();
 
