@@ -3,11 +3,11 @@ package com.nhnacademy.illuwa.controller;
 import com.nhnacademy.illuwa.dto.SignupRequest;
 import com.nhnacademy.illuwa.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
@@ -15,9 +15,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute SignupRequest signupRequest) {
+    public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) {
         authService.signup(signupRequest);
-        return "redirect:/";
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 //    @PostMapping
