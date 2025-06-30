@@ -13,13 +13,14 @@ public class JwtProvider {
 
     private final JwtProperties jwtProperties;
 
-    public String generateAccessToken(Long userId) {
+    public String generateAccessToken(Long userId, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtProperties.getAccessTokenValidity());
 
         return Jwts.builder()
                 .setSubject(userId.toString())
-                .setIssuedAt(now)
+                .claim("role", role)
+                .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
                 .compact();

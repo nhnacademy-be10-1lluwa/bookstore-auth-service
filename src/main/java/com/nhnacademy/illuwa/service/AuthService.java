@@ -1,8 +1,10 @@
 package com.nhnacademy.illuwa.service;
 
-import com.nhnacademy.illuwa.dto.SignupRequest;
+import com.nhnacademy.illuwa.dto.LoginRequest;
+import com.nhnacademy.illuwa.dto.RegisterRequest;
+import com.nhnacademy.illuwa.dto.TokenResponse;
 
 public interface AuthService {
-    void signup(SignupRequest signupRequest);
-//    String login(LoginRequest request);
+    void signup(RegisterRequest memberRegisterRequest);
+    TokenResponse login(LoginRequest loginRequest);
 }
