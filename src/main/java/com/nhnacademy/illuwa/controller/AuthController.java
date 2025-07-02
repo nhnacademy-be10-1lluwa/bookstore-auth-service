@@ -3,6 +3,7 @@ package com.nhnacademy.illuwa.controller;
 import com.nhnacademy.illuwa.dto.LoginRequest;
 import com.nhnacademy.illuwa.dto.RegisterRequest;
 import com.nhnacademy.illuwa.dto.TokenResponse;
+import com.nhnacademy.illuwa.dto.UserSession;
 import com.nhnacademy.illuwa.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,5 +27,11 @@ public class AuthController {
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
         TokenResponse tokenResponse = authService.login(loginRequest);
         return ResponseEntity.ok(tokenResponse);
+    }
+
+    @PostMapping("/parse-token")
+    public ResponseEntity<UserSession> parseToken(@RequestHeader("Authorization") String token) {
+        UserSession userSession = authService.parse(token);
+        return ResponseEntity.ok(userSession);
     }
 }
