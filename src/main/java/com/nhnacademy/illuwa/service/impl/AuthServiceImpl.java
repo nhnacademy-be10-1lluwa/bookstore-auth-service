@@ -1,7 +1,7 @@
 package com.nhnacademy.illuwa.service.impl;
 
 import com.nhnacademy.illuwa.client.UserClient;
-import com.nhnacademy.illuwa.common.jwt.JwtProvider;
+import com.nhnacademy.illuwa.jwt.JwtProvider;
 import com.nhnacademy.illuwa.dto.*;
 import com.nhnacademy.illuwa.service.AuthService;
 import lombok.RequiredArgsConstructor;
