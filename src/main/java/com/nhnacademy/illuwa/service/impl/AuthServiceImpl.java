@@ -2,10 +2,7 @@ package com.nhnacademy.illuwa.service.impl;
 
 import com.nhnacademy.illuwa.client.UserClient;
 import com.nhnacademy.illuwa.common.jwt.JwtProvider;
-import com.nhnacademy.illuwa.dto.LoginRequest;
-import com.nhnacademy.illuwa.dto.MemberResponse;
-import com.nhnacademy.illuwa.dto.RegisterRequest;
-import com.nhnacademy.illuwa.dto.TokenResponse;
+import com.nhnacademy.illuwa.dto.*;
 import com.nhnacademy.illuwa.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,5 +28,13 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtProvider.generateAccessToken(userId, role);
         return new TokenResponse(token);
+    }
+
+    @Override
+    public UserSession parse(String token) {
+        Long userId = jwtProvider.getUserIdFromToken(token);
+        String role = jwtProvider.getRoleFromToken(token);
+
+        return new UserSession(userId, role);
     }
 }
