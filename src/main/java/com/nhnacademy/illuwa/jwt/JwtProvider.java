@@ -1,4 +1,4 @@
-package com.nhnacademy.illuwa.common.jwt;
+package com.nhnacademy.illuwa.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -7,8 +7,10 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -16,17 +18,22 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    private final JwtProperties jwtProperties;
+    @Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.access-token-validity}")
+    private long accessTokenValidity;
+//    @Value("${refresh-token-validity}")
+//    private long refreshTokenValidity;
     private Key key;
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateAccessToken(Long userId, String role) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtProperties.getAccessTokenValidity());
+        Date expiryDate = new Date(now.getTime() + accessTokenValidity);
 
         return Jwts.builder()
                 .setSubject(userId.toString())
@@ -35,18 +42,6 @@ public class JwtProvider {
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (SignatureException e) {
-            return false;
-        }
     }
 
     public Claims getClaims(String token) {
