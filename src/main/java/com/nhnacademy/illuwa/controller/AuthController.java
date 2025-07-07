@@ -1,9 +1,6 @@
 package com.nhnacademy.illuwa.controller;
 
-import com.nhnacademy.illuwa.dto.LoginRequest;
-import com.nhnacademy.illuwa.dto.RegisterRequest;
-import com.nhnacademy.illuwa.dto.TokenResponse;
-import com.nhnacademy.illuwa.dto.UserSession;
+import com.nhnacademy.illuwa.dto.*;
 import com.nhnacademy.illuwa.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,8 +27,14 @@ public class AuthController {
     }
 
     @PostMapping("/parse-token")
-    public ResponseEntity<UserSession> parseToken(@RequestHeader("Authorization") String token) {
-        UserSession userSession = authService.parse(token);
-        return ResponseEntity.ok(userSession);
+    public ResponseEntity<UserSession> parseToken(@RequestHeader("Authorization") String authorization) {
+        String token = authorization.startsWith("Bearer ") ? authorization.substring(7) : authorization;
+        return ResponseEntity.ok(authService.parse(token));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest refreshRequest) {
+        TokenResponse tokenResponse = authService.refreshAccessToken(refreshRequest.getRefreshToken());
+        return ResponseEntity.ok(tokenResponse);
     }
 }
