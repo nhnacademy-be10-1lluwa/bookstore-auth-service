@@ -17,5 +17,6 @@ public class RegisterRequest {
     private String email;
     private String password;
     private String contact;
+    private String paycoId;
 }
 
