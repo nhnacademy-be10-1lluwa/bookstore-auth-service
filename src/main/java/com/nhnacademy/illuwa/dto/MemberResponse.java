@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MemberResponse {
     private long memberId;
+    private String paycoId;
     private String name;
     private LocalDate birth;
     private String email;
@@ -25,5 +26,6 @@ public class MemberResponse {
     private String gradeName;
     private BigDecimal point;
     private Status status;
+    private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
 }
