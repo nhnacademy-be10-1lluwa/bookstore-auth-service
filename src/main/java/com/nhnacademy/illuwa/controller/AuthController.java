@@ -14,25 +14,25 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/api/signup")
+    @PostMapping("/signup")
     public ResponseEntity<Void> signup(@RequestBody RegisterRequest memberRegisterRequest) {
         authService.signup(memberRegisterRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
         TokenResponse tokenResponse = authService.login(loginRequest);
         return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/api/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest refreshRequest) {
         TokenResponse tokenResponse = authService.refreshAccessToken(refreshRequest.getRefreshToken());
         return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/api/social-login")
+    @PostMapping("/social-login")
     public ResponseEntity<TokenResponse> loginWithPayco(@RequestBody SocialLoginRequest request) {
         TokenResponse tokenResponse = authService.socialLogin(request);
         return ResponseEntity.ok(tokenResponse);
