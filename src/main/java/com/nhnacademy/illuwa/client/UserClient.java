@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "user-service")
 public interface UserClient {
-    @PostMapping("/members")
+    @PostMapping("/api/members")
     void createMember(@RequestBody RegisterRequest request);
 
-    @PostMapping("/members/login")
+    @PostMapping("/api/members/login")
     MemberResponse login(@RequestBody LoginRequest request);
 
-    @PostMapping("/members/internal/social-members/check")
+    @PostMapping("/api/members/internal/social-members/check")
     ResponseEntity<MemberResponse> checkPaycoUser(@RequestBody PaycoMemberRequest request);
 
-    @PostMapping("/members/internal/social-members")
+    @PostMapping("/api/members/internal/social-members")
     MemberResponse registerPaycoUser(@RequestBody PaycoMemberRequest request);
 }

@@ -9,30 +9,30 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/signup")
+    @PostMapping("/api/signup")
     public ResponseEntity<Void> signup(@RequestBody RegisterRequest memberRegisterRequest) {
         authService.signup(memberRegisterRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
         TokenResponse tokenResponse = authService.login(loginRequest);
         return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/refresh")
+    @PostMapping("/api/refresh")
     public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest refreshRequest) {
         TokenResponse tokenResponse = authService.refreshAccessToken(refreshRequest.getRefreshToken());
         return ResponseEntity.ok(tokenResponse);
     }
 
-    @PostMapping("/social-login")
+    @PostMapping("/api/social-login")
     public ResponseEntity<TokenResponse> loginWithPayco(@RequestBody SocialLoginRequest request) {
         TokenResponse tokenResponse = authService.socialLogin(request);
         return ResponseEntity.ok(tokenResponse);
