@@ -1,6 +1,7 @@
 package com.nhnacademy.illuwa.service;
 
 import com.nhnacademy.illuwa.client.UserClient;
+import com.nhnacademy.illuwa.dto.enums.Status;
 import com.nhnacademy.illuwa.jwt.JwtProvider;
 import com.nhnacademy.illuwa.dto.*;
 import feign.FeignException;
@@ -22,11 +23,12 @@ public class AuthService {
         userClient.createMember(req);
     }
 
-    public TokenResponse login(LoginRequest req) {
+    public MemberLoginResponse login(LoginRequest req) {
         MemberResponse memberResponse = userClient.login(req);
 
         Long userId = memberResponse.getMemberId();
         String role = memberResponse.getRole().toString();
+        Status status = memberResponse.getStatus();
 
         String access = jwtProvider.generateAccessToken(userId, role);
         String refresh = jwtProvider.generateRefreshToken();
@@ -34,7 +36,7 @@ public class AuthService {
 
         refreshTokenService.save(userId, refresh);
 
-        return new TokenResponse(access, refresh, ttl);
+        return new MemberLoginResponse(access, refresh, ttl, status);
     }
 
     public TokenResponse refreshAccessToken(String refreshToken) {
