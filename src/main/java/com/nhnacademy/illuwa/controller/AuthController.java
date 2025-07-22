@@ -33,10 +33,13 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "잘못된 자격 증명")
     })
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
-        TokenResponse tokenResponse = authService.login(loginRequest);
-        return ResponseEntity.ok(tokenResponse);
+    public ResponseEntity<MemberLoginResponse> login(@RequestBody LoginRequest loginRequest) {
+//        TokenResponse tokenResponse = authService.login(loginRequest);
+//        return ResponseEntity.ok(tokenResponse);
+        MemberLoginResponse loginResponse = authService.login(loginRequest);
+        return ResponseEntity.ok(loginResponse);
     }
+
 
     @Operation(summary = "AccessToken 재발급", description = "RefreshToken을 통해 AccessToken을 재발급합니다.")
     @PostMapping("/refresh")
