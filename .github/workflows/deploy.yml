@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.REMOTE_PASS }}
           port: ${{ secrets.SSH_PORT }}
           source: "docker-output/auth-service.tar"
-          target: "~/deploy/auth"
+          target: "~/deploy/auth/docker-output"
 
       - name: Run Docker with Rolling Deployment
         uses: appleboy/ssh-action@v0.1.10
