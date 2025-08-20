@@ -5,6 +5,7 @@ import com.nhnacademy.illuwa.dto.enums.Status;
 import com.nhnacademy.illuwa.jwt.JwtProvider;
 import com.nhnacademy.illuwa.dto.*;
 import feign.FeignException;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class AuthService {
     private final UserClient userClient;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     public void signup(RegisterRequest req) {
         userClient.createMember(req);
@@ -30,24 +32,40 @@ public class AuthService {
         String role = memberResponse.getRole().toString();
         Status status = memberResponse.getStatus();
 
+        // Access Token
         String access = jwtProvider.generateAccessToken(userId, role);
-        String refresh = jwtProvider.generateRefreshToken();
         long ttl = jwtProvider.getAccessTokenValidity() / 1000;
 
-        refreshTokenService.save(userId, refresh);
+        // Refresh Token
+        String refresh = jwtProvider.generateRefreshToken();
+        String rtHash = jwtProvider.hashRefreshToken(refresh);
+        refreshTokenService.save(userId, rtHash);
 
         return new MemberLoginResponse(access, refresh, ttl, status);
     }
 
-    public TokenResponse refreshAccessToken(String refreshToken) {
-        Long userId = refreshTokenService.validate(refreshToken);
+    public TokenResponse refreshAccessToken(String refreshToken, String expiredAccessToken) {
+        // 기존 RT 검증
+        jwtProvider.validateRefreshToken(refreshToken);
 
-        // 새 Access
-        String role = "ROLE_USER";
+        String rtHash = jwtProvider.hashRefreshToken(refreshToken);
+        Long userId = refreshTokenService.validate(rtHash);
+
+        // 만료된 AT 에서 role 추출
+        Claims claims = jwtProvider.getClaimsAllowExpired(expiredAccessToken);
+        String role = claims.get("role", String.class);
+
+        // 새 AT 생성
         String newAccess = jwtProvider.generateAccessToken(userId, role);
         long ttl = jwtProvider.getAccessTokenValidity() / 1000;
 
-        return new TokenResponse(newAccess, ttl);
+        // RT 로테이션 -> 기존 RT 폐기 + 새 RT 저장
+        refreshTokenService.delete(rtHash);
+        String newRefresh =  jwtProvider.generateRefreshToken();
+        String newRtHash = jwtProvider.hashRefreshToken(newRefresh);
+        refreshTokenService.save(userId, newRtHash);
+
+        return new TokenResponse(newAccess, newRefresh, ttl);
     }
 
     public TokenResponse socialLogin(SocialLoginRequest request) {
@@ -56,15 +74,15 @@ public class AuthService {
 
         Long userId = member.getMemberId();
         String role = member.getRole().toString();
-        log.info("Login Success: {}", member);
 
-        String accessToken = jwtProvider.generateAccessToken(userId, role);
-        String refreshToken = jwtProvider.generateRefreshToken();
+        String access = jwtProvider.generateAccessToken(userId, role);
         long ttl = jwtProvider.getAccessTokenValidity() / 1000;
 
-        refreshTokenService.save(userId, refreshToken);
+        String refresh = jwtProvider.generateRefreshToken();
+        String rtHash = jwtProvider.hashRefreshToken(refresh);
+        refreshTokenService.save(userId, rtHash);
 
-        return new TokenResponse(accessToken, refreshToken, ttl);
+        return new TokenResponse(access, refresh, ttl);
     }
 
     private MemberResponse findOrRegisterMember(PaycoMemberRequest request) {
@@ -81,6 +99,16 @@ public class AuthService {
                 throw new IllegalStateException("회원 등록 결과가 null입니다.");
             }
             return registered;
+        }
+    }
+
+    public void logout(String accessToken, String refreshToken) {
+        if(accessToken != null) {
+            tokenBlacklistService.setBlacklistAccessToken(accessToken);
+        }
+
+        if(refreshToken != null) {
+            refreshTokenService.delete(refreshToken);
         }
     }
 }

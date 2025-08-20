@@ -16,33 +16,38 @@ public class RefreshTokenService {
     private final RedisTemplate<String, String> redisTemplate;
     private final JwtProvider jwtProvider;
 
-    public void save(Long userId, String refreshToken) {
+    private String keyByHash(String rtHash) {
+        return KEY_PREFIX + rtHash;
+    }
+
+    public void save(Long userId, String rtHash) {
         long ttlMillis = jwtProvider.getRefreshTokenValidity();
+        String key = keyByHash(rtHash);
 
         redisTemplate.opsForValue().set(
-                key(refreshToken),
+                key,
                 String.valueOf(userId),
                 ttlMillis,
                 TimeUnit.MILLISECONDS);
     }
 
-    public Long validate(String refreshToken) {
-
-        jwtProvider.validateRefreshToken(refreshToken);
-
-        String userId = redisTemplate.opsForValue().get(key(refreshToken));
-        if(userId == null) {
-            throw new InvalidTokenException("저장소에 존재하지 않는 Refresh Token");
+    public Long validate(String rtHash) {
+        if (rtHash == null || rtHash.isBlank()) {
+            throw new InvalidTokenException("INVALID_REFRESH_TOKEN", "리프레시 토큰이 없습니다.");
         }
 
+        String key = keyByHash(rtHash);
+        String userId = redisTemplate.opsForValue().get(key);
+        if(userId == null) {
+            throw new InvalidTokenException("REFRESH_TOKEN_NOT_FOUND", "리프레쉬 토큰이 존재하지 않습니다.");
+        }
         return Long.valueOf(userId);
     }
 
-    public void delete(String refreshToken) {
-        redisTemplate.delete(key(refreshToken));
-    }
-
-    private String key(String refreshToken) {
-        return KEY_PREFIX + refreshToken;
+    public void delete(String rtHash) {
+        if(rtHash == null || rtHash.isBlank()) {
+            return;
+        }
+        redisTemplate.delete(keyByHash(rtHash));
     }
 }

@@ -16,9 +16,4 @@ public class TokenResponse {
     private String refreshToken;
     @JsonProperty("expires_in")
     private Long expiresIn;
-
-    // ★ 재발급(AccessToken만) 전용
-    public TokenResponse(String accessToken, long expiresIn) {
-        this(accessToken, null, expiresIn);
-    }
 }

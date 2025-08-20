@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +43,8 @@ public class AuthController {
 
     @Operation(summary = "AccessToken 재발급", description = "RefreshToken을 통해 AccessToken을 재발급합니다.")
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest refreshRequest) {
-        TokenResponse tokenResponse = authService.refreshAccessToken(refreshRequest.getRefreshToken());
+    public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest request) {
+        TokenResponse tokenResponse = authService.refreshAccessToken(request.getRefreshToken(), request.getAccessToken());
         return ResponseEntity.ok(tokenResponse);
     }
 
@@ -51,5 +53,14 @@ public class AuthController {
     public ResponseEntity<TokenResponse> loginWithPayco(@RequestBody SocialLoginRequest request) {
         TokenResponse tokenResponse = authService.socialLogin(request);
         return ResponseEntity.ok(tokenResponse);
+    }
+
+    @Operation(summary = "로그아웃", description = "Access/Refresh 토큰을 무효화합니다.")
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader,
+                                       @RequestBody TokenResponse tokenResponse) {
+        String accessToken = authHeader.substring(7); // "Bearer " 제거
+        authService.logout(accessToken, tokenResponse.getRefreshToken());
+        return ResponseEntity.ok().build();
     }
 }
