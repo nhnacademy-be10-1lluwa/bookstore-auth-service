@@ -2,16 +2,22 @@ package com.nhnacademy.illuwa.controller;
 
 import com.nhnacademy.illuwa.dto.*;
 import com.nhnacademy.illuwa.service.AuthService;
+import com.nhnacademy.illuwa.service.IpContextService;
+import com.nhnacademy.illuwa.service.SecurityAnalyzer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final IpContextService ipContextService;
 
     @Operation(summary = "회원가입", description = "사용자가 회원가입을 요청합니다.")
     @ApiResponse(responseCode = "201", description = "회원가입 성공")
@@ -35,16 +42,37 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "잘못된 자격 증명")
     })
     @PostMapping("/login")
-    public ResponseEntity<MemberLoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        MemberLoginResponse loginResponse = authService.login(loginRequest);
+    public ResponseEntity<MemberLoginResponse> login(@RequestBody LoginRequest loginRequest,
+                                                     HttpServletRequest request) {
+        // IP, UserAgent 추출
+        String clientIp = ipContextService.extractClientIp(request);
+        String userAgent = request.getHeader("User-Agent");
+
+//        MemberLoginResponse loginResponse = authService.login(loginRequest);
+        MemberLoginResponse loginResponse = authService.loginWithContext(
+                loginRequest, clientIp, userAgent
+        );
+
         return ResponseEntity.ok(loginResponse);
     }
 
 
     @Operation(summary = "AccessToken 재발급", description = "RefreshToken을 통해 AccessToken을 재발급합니다.")
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest request) {
-        TokenResponse tokenResponse = authService.refreshAccessToken(request.getRefreshToken(), request.getAccessToken());
+    public ResponseEntity<TokenResponse> refreshToken(@RequestBody TokenRefreshRequest request,
+                                                      HttpServletRequest httpRequest) {
+        // IP, UserAgent 추출
+        String clientIp = ipContextService.extractClientIp(httpRequest);
+        String userAgent = httpRequest.getHeader("User-Agent");
+
+//        TokenResponse tokenResponse = authService.refreshAccessToken(request.getRefreshToken(), request.getAccessToken());
+        TokenResponse tokenResponse = authService.refreshAccessTokenWithContext(
+                request.getRefreshToken(),
+                request.getAccessToken(),
+                clientIp,
+                userAgent
+        );
+
         return ResponseEntity.ok(tokenResponse);
     }
 
@@ -57,10 +85,13 @@ public class AuthController {
 
     @Operation(summary = "로그아웃", description = "Access/Refresh 토큰을 무효화합니다.")
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader,
-                                       @RequestBody TokenResponse tokenResponse) {
-        String accessToken = authHeader.substring(7); // "Bearer " 제거
-        authService.logout(accessToken, tokenResponse.getRefreshToken());
+    public ResponseEntity<Void> logout(@RequestBody TokenResponse tokenResponse) {
+        authService.logout(tokenResponse.getRefreshToken());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/test/fast")
+    public ResponseEntity<String> fast() {
+        return ResponseEntity.ok("OK");
     }
 }
