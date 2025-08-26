@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.time.LocalDateTime;
 
@@ -49,6 +50,9 @@ public class AuthService {
 //    }
 
 //    public TokenResponse refreshAccessToken(String refreshToken, String expiredAccessToken) {
+//        StopWatch sw = new StopWatch("JWT-Refresh");
+//
+//        sw.start("Validating Refresh Token");
 //        // 기존 RT 검증
 //        jwtProvider.validateRefreshToken(refreshToken);
 //
@@ -62,19 +66,30 @@ public class AuthService {
 //        // 만료된 AT 에서 role 추출
 //        Claims claims = jwtProvider.getClaimsAllowExpired(expiredAccessToken);
 //        String role = claims.get("role", String.class);
+//        sw.stop();
 //
+//        sw.start("New Access-Token Creating");
 //        // 새 AT 생성
 //        String newAccess = jwtProvider.generateAccessToken(userId, role);
 //        long ttl = jwtProvider.getAccessTokenValidity() / 1000;
+//        sw.stop();
 //
+//        sw.start("RTR - Token Refresh");
 //        // RT 로테이션 -> 기존 RT 폐기 + 새 RT 저장
 //        refreshTokenService.delete(rtHash);
 //        String newRefresh =  jwtProvider.generateRefreshToken();
 //        String newRtHash = jwtProvider.hashRefreshToken(newRefresh);
 //        refreshTokenService.save(userId, newRtHash);
+//        sw.stop();
 //
+//        logPerformance(sw);
 //        return new TokenResponse(newAccess, newRefresh, ttl);
 //    }
+
+    private void logPerformance(StopWatch sw) {
+        log.info("JWT Validation Performance: total={}ms, details=\n{}",
+                sw.getTotalTimeMillis(), sw.prettyPrint());
+    }
 
     public TokenResponse socialLogin(SocialLoginRequest request) {
         PaycoMemberRequest paycoMemberRequest = PaycoMemberRequest.of(request);
@@ -117,6 +132,11 @@ public class AuthService {
             refreshTokenService.delete(rtHash);
         }
     }
+//    public void logout(String accessToken) {
+//        if(accessToken != null) {
+//            tokenBlacklistService.setBlacklistAccessToken(accessToken);
+//        }
+//    }
 
     public MemberLoginResponse loginWithContext(LoginRequest req, String clientIp, String userAgent) {
         MemberResponse memberResponse = userClient.login(req);
@@ -142,6 +162,9 @@ public class AuthService {
     }
 
     public TokenResponse refreshAccessTokenWithContext(String refreshToken, String accessToken, String clientIp, String userAgent) {
+        StopWatch sw = new StopWatch("JWT-Refresh With IP/UA");
+
+        sw.start("Validating Refresh Token");
         // 1. RT 검증
         jwtProvider.validateRefreshToken(refreshToken);
 
@@ -152,7 +175,9 @@ public class AuthService {
 
         String rtHash = jwtProvider.hashRefreshToken(refreshToken);
         Long userId = refreshTokenService.validate(rtHash);
+        sw.stop();
 
+        sw.start("Validating Token Context");
         // 3. 컨텍스트 검증
         TokenContext context = refreshTokenService.getContext(rtHash);
         if (context != null) {
@@ -165,7 +190,9 @@ public class AuthService {
                 throw new SecurityException("의심스러운 접근이 탐지되었습니다.");
             }
         }
+        sw.stop();
 
+        sw.start("RTR - Token Refresh");
         // 4. RTR 진행
         Claims claims = jwtProvider.getClaimsAllowExpired(accessToken);
         String role = claims.get("role", String.class);
@@ -182,6 +209,9 @@ public class AuthService {
         refreshTokenService.saveWithContext(userId, newRtHash, newContext);
 
         long ttl = jwtProvider.getAccessTokenValidity() / 1000;
+        sw.stop();
+
+        logPerformance(sw);
         return new TokenResponse(newAccess, newRefresh, ttl);
     }
 }
