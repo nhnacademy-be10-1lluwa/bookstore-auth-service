@@ -125,18 +125,18 @@ public class AuthService {
         }
     }
 
-    public void logout(String refreshToken) {
-        if(refreshToken != null) {
-            tokenBlacklistService.setBlacklistRefreshToken(refreshToken);
-            String rtHash = jwtProvider.hashRefreshToken(refreshToken);
-            refreshTokenService.delete(rtHash);
-        }
-    }
-//    public void logout(String accessToken) {
-//        if(accessToken != null) {
-//            tokenBlacklistService.setBlacklistAccessToken(accessToken);
+//    public void logout(String refreshToken) {
+//        if(refreshToken != null) {
+//            tokenBlacklistService.setBlacklistRefreshToken(refreshToken);
+//            String rtHash = jwtProvider.hashRefreshToken(refreshToken);
+//            refreshTokenService.delete(rtHash);
 //        }
 //    }
+    public void logout(String accessToken) {
+        if(accessToken != null) {
+            tokenBlacklistService.setBlacklistAccessToken(accessToken);
+        }
+    }
 
     public MemberLoginResponse loginWithContext(LoginRequest req, String clientIp, String userAgent) {
         MemberResponse memberResponse = userClient.login(req);

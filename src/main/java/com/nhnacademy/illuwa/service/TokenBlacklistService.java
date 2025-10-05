@@ -30,19 +30,19 @@ public class TokenBlacklistService {
                 TimeUnit.MILLISECONDS
         );
     }
-//    public void setBlacklistAccessToken(String accessToken) {
-//        if(accessToken == null || accessToken.isEmpty()) {
-//            return;
-//        }
-//
-//        long ttl = jwtProvider.getAccessTokenValidity();
-//        redisTemplate.opsForValue().set(
-//                REFRESH_BLACKLIST_PREFIX + accessToken,
-//                "blacklisted",
-//                ttl,
-//                TimeUnit.MILLISECONDS
-//        );
-//    }
+    public void setBlacklistAccessToken(String accessToken) {
+        if(accessToken == null || accessToken.isEmpty()) {
+            return;
+        }
+
+        long ttl = jwtProvider.getAccessTokenValidity();
+        redisTemplate.opsForValue().set(
+                REFRESH_BLACKLIST_PREFIX + accessToken,
+                "blacklisted",
+                ttl,
+                TimeUnit.MILLISECONDS
+        );
+    }
 
     public boolean isBlacklisted(String refreshToken) {
         if(refreshToken == null || refreshToken.isEmpty()) {
