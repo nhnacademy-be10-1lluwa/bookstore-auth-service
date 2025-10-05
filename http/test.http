@@ -1,0 +1,17 @@
+### Refresh Test
+POST http://localhost:10300/auth/refresh
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2MTg4ODExLCJleHAiOjE3NTYxOTA2MTF9.biY_ftY4HqnyrYk7xo4iwTybdDyccIzBpH2Lr8J9ZGE
+Cookie: ACCESS_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2MTg4ODExLCJleHAiOjE3NTYxOTA2MTF9.biY_ftY4HqnyrYk7xo4iwTybdDyccIzBpH2Lr8J9ZGE; REFRESH_TOKEN=mgjumlSb1Yf7Nzj9YWEywe4Z57iDjTrSiufV8IhJhrk
+X-Forwarded-For: 127.0.0.1
+User-Agent: Apache-HttpClient/4.5.14 (Java/21.0.7)
+Content-Type: application/json
+
+{
+  "refreshToken": "mgjumlSb1Yf7Nzj9YWEywe4Z57iDjTrSiufV8IhJhrk",
+  "accessToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2MTg4ODExLCJleHAiOjE3NTYxOTA2MTF9.biY_ftY4HqnyrYk7xo4iwTybdDyccIzBpH2Lr8J9ZGE"
+}
+
+### Fast Test
+GET http://localhost:10300/test/fast
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2MTA1MDU4LCJleHAiOjE3NTYxMDY4NTh9.yeDfPUfxPW8GGsxI6OOOiGx_vWJ0AhKpsIS15LkCY9w
+Cookie: ACCESS_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzU2MTA1MDU4LCJleHAiOjE3NTYxMDY4NTh9.yeDfPUfxPW8GGsxI6OOOiGx_vWJ0AhKpsIS15LkCY9w; REFRESH_TOKEN=pOJkKDr61htGO3MDhB0GnUtCyxqeEeAlvc8zcRO3Dvg
