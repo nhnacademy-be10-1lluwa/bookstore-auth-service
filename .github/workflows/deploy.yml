@@ -34,13 +34,24 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
 
-      - name: Restart service via Rolling script
+      - name: Rolling Deploy (v1)
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.SSH_ID }}
-          password: ${{ secrets.REMOTE_PASS }}
+          password: ${{ secrets.SSH_PASS }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ~/deploy/auth
-            ./start.sh
+            chmod +x ~/deploy/auth/auth-service-deploy.sh
+            ~/deploy/auth/auth-service-deploy.sh v1
+
+      - name: Rolling Deploy (v2)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.SSH_ID }}
+          password: ${{ secrets.SSH_PASS }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            chmod +x ~/deploy/auth/auth-service-deploy.sh
+            ~/deploy/auth/auth-service-deploy.sh v2
