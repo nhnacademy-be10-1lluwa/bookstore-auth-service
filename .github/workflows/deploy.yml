@@ -39,7 +39,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.SSH_ID }}
-          password: ${{ secrets.SSH_PASS }}
+          password: ${{ secrets.REMOTE_PASS }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             chmod +x ~/deploy/auth/auth-service-deploy.sh
@@ -50,7 +50,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.SSH_ID }}
-          password: ${{ secrets.SSH_PASS }}
+          password: ${{ secrets.REMOTE_PASS }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             chmod +x ~/deploy/auth/auth-service-deploy.sh
