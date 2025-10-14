@@ -29,10 +29,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:latest -f ./Dockerfile .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/1lluwa-auth-service:latest -f ./Dockerfile .
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/1lluwa-auth-service:latest
 
       - name: Rolling Deploy (v1)
         uses: appleboy/ssh-action@v0.1.10
@@ -42,8 +42,8 @@ jobs:
           password: ${{ secrets.REMOTE_PASS }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            chmod +x ~/deploy/auth/auth-service-deploy.sh
-            ~/deploy/auth/auth-service-deploy.sh v1
+            chmod +x ~/scripts/auth-service-deploy.sh
+            ~/scripts/auth-service-deploy.sh v1
 
       - name: Rolling Deploy (v2)
         uses: appleboy/ssh-action@v0.1.10
@@ -53,5 +53,5 @@ jobs:
           password: ${{ secrets.REMOTE_PASS }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            chmod +x ~/deploy/auth/auth-service-deploy.sh
-            ~/deploy/auth/auth-service-deploy.sh v2
+            chmod +x ~/scripts/auth-service-deploy.sh
+            ~/scripts/auth-service-deploy.sh v2
