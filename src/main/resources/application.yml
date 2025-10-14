@@ -2,4 +2,4 @@ spring:
   application:
     name: auth-service
   config:
-    import: optional:configserver:https://book1lluwa.store/config/
+    import: optional:configserver:http://10.116.64.11:10319/
