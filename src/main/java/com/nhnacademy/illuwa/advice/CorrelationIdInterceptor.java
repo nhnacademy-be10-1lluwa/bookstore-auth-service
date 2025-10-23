@@ -22,9 +22,9 @@ public class CorrelationIdInterceptor implements HandlerInterceptor {
 
         if (correlationId != null) {
             MDC.put(CORRELATION_ID_LOG_KEY, correlationId);
-            log.info("✅ MDC에 Correlation-ID 저장 완료: {}", correlationId); // ✅ 디버그 로그
+            log.info("MDC에 Correlation-ID 저장: {}", correlationId);
         } else {
-            log.warn("⚠️ Correlation-ID 헤더가 없습니다!"); // ✅ 경고 로그
+            log.warn("Correlation-ID 헤더가 없습니다!");
         }
 
         return true;
